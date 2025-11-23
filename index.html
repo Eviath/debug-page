@@ -124,6 +124,22 @@
         
         <div class="info-grid">
             <div class="info-item">
+                <div class="info-label">PV id: </div>
+                <div class="info-value" id="pvId">-</div>
+            </div>
+
+              <div class="info-item">
+                <div class="info-label">SessionTime: </div>
+                <div class="info-value" id="sessionTime">-</div>
+            </div>
+
+                  <div class="info-item">
+                <div class="info-label">Last visible time: </div>
+                <div class="info-value" id="lastVisibleTime">-</div>
+            </div>
+
+            
+            <div class="info-item">
                 <div class="info-label">Pointer Type</div>
                 <div class="info-value" id="pointerType">-</div>
             </div>
@@ -224,6 +240,13 @@ let pvId = generateUUID(); // Generate on real PV event (e.g., page load)
 let sessionTime = 0;
 let lastVisibleTime = null;
 
+const pvIdElement = document.getElementById('pvId');
+pvIdElement.textContent = pvId;
+
+const lastVisibleTimeElement = document.getElementById('lastVisibleTime');
+const sessionTimeElement = document.getElementById('sessionTime');
+sessionTimeElement.textContent = sessionTime;
+
 function reportTime(state, totalSeconds) {
   navigator.sendBeacon(
     'https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766',
@@ -234,16 +257,21 @@ function reportTime(state, totalSeconds) {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     lastVisibleTime = Date.now();
+    lastVisibleTimeElement.textContent = lastVisibleTime;
+    
   } else if (document.visibilityState === 'hidden') {
     if (lastVisibleTime !== null) {
       let now = Date.now();
       let deltaSeconds = Math.round((now - lastVisibleTime) / 1000);
       sessionTime += deltaSeconds;
+      sessionTimeElement.textContent = sessionTime;
       lastVisibleTime = null;
+      lastVisibleTimeElement.textContent = null;
       reportTime('hidden', sessionTime);
     }
   }
 });
+
 
 // window.addEventListener('beforeunload', () => {
 //   if (lastVisibleTime !== null) {
