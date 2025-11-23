@@ -171,9 +171,20 @@
 
         // Update information when window is resized (though screen dimensions shouldn't change)
         window.addEventListener('resize', updateInfo);
-          window.addEventListener('visibilitychange', () => {
-              navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', document.visibilityState);
-          });
+        let lastVisibleTime = null, totalActiveTime = 0;
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    lastVisibleTime = Date.now();
+    // Optionally resume heartbeat/active timer
+  } else if (document.visibilityState === 'hidden') {
+    totalActiveTime += Date.now() - lastVisibleTime;
+    lastVisibleTime = null;
+    // Send engagement/time data
+    navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', `state: ${document.visibilityState}, timer: ${lastVisibleTime}`);
+  }
+});
+    
     </script>
 </body>
 </html>
