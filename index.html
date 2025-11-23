@@ -172,10 +172,7 @@
         // Update information when window is resized (though screen dimensions shouldn't change)
         window.addEventListener('resize', updateInfo);
           window.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') {
-              console.log('PPGMT Options page hidden');
-              navigator.sendBeacon('https://webhook.site/4d3237fd-e26a-4f5d-826f-f0c82af7d693', 'PPGMT Options page hidden');
-            }
+              navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', document.visibilityState);
           });
     </script>
 </body>
