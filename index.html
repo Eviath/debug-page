@@ -173,17 +173,45 @@
         window.addEventListener('resize', updateInfo);
         let lastVisibleTime = null, totalActiveTime = 0;
 
+                function generateUUID() {
+  return 'xxxxxxxxyxxxxxxxyxxxxxxxyxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0;
+    return r.toString(16);
+  });
+}
+        
+let pvId = generateUUID(); // Generate on real PV event (e.g., page load)
+let sessionTime = 0;
+let lastVisibleTime = null;
+
+function reportTime(seconds) {
+  navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', `pv: ${pvId}, state: ${document.visibilityState}, seconds: ${seconds}`);
+}
+
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     lastVisibleTime = Date.now();
-    // Optionally resume heartbeat/active timer
   } else if (document.visibilityState === 'hidden') {
-    totalActiveTime += Date.now() - lastVisibleTime;
-    lastVisibleTime = null;
-    // Send engagement/time data
-    navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', `state: ${document.visibilityState}, totalActiveTime: ${totalActiveTime}`);
+    if (lastVisibleTime !== null) {
+      let now = Date.now();
+      let deltaSeconds = Math.round((now - lastVisibleTime) / 1000); // **seconds**
+      reportTime(deltaSeconds);
+      sessionTime += deltaSeconds;
+      lastVisibleTime = null;
+    }
   }
 });
+
+window.addEventListener('beforeunload', () => {
+  if (lastVisibleTime !== null) {
+    let now = Date.now();
+    let deltaSeconds = Math.round((now - lastVisibleTime) / 1000); // **seconds**
+    reportTime(deltaSeconds);
+    sessionTime += deltaSeconds;
+    lastVisibleTime = null;
+  }
+});
+
     
     </script>
 </body>
