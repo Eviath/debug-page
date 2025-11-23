@@ -181,7 +181,7 @@ document.addEventListener('visibilitychange', () => {
     totalActiveTime += Date.now() - lastVisibleTime;
     lastVisibleTime = null;
     // Send engagement/time data
-    navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', `state: ${document.visibilityState}, timer: ${lastVisibleTime}`);
+    navigator.sendBeacon('https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766', `state: ${document.visibilityState}, totalActiveTime: ${totalActiveTime}`);
   }
 });
     
