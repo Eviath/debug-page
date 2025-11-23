@@ -224,10 +224,10 @@ let pvId = generateUUID(); // Generate on real PV event (e.g., page load)
 let sessionTime = 0;
 let lastVisibleTime = null;
 
-function reportTime(totalSeconds) {
+function reportTime(state, totalSeconds) {
   navigator.sendBeacon(
     'https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766',
-    `pv: ${pvId}, state: ${document.visibilityState}, total_seconds: ${totalSeconds}`
+    `pv: ${pvId}, state: ${state}, total_seconds: ${totalSeconds}`
   );
 }
 
@@ -239,21 +239,21 @@ document.addEventListener('visibilitychange', () => {
       let now = Date.now();
       let deltaSeconds = Math.round((now - lastVisibleTime) / 1000);
       sessionTime += deltaSeconds;
-      reportTime(sessionTime);
       lastVisibleTime = null;
+      reportTime('hidden', sessionTime);
     }
   }
 });
 
-window.addEventListener('beforeunload', () => {
-  if (lastVisibleTime !== null) {
-    let now = Date.now();
-    let deltaSeconds = Math.round((now - lastVisibleTime) / 1000);
-    sessionTime += deltaSeconds;
-    reportTime(sessionTime);
-    lastVisibleTime = null;
-  }
-});
+// window.addEventListener('beforeunload', () => {
+//   if (lastVisibleTime !== null) {
+//     let now = Date.now();
+//     let deltaSeconds = Math.round((now - lastVisibleTime) / 1000);
+//     sessionTime += deltaSeconds;
+//     reportTime(sessionTime);
+//     lastVisibleTime = null;
+//   }
+// });
 
     
     </script>
