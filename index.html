@@ -238,12 +238,13 @@ function generateUUID() {
 
 let pvId = generateUUID(); // Generate on real PV event (e.g., page load)
 let sessionTime = 0;
-let lastVisibleTime = null;
+let lastVisibleTime = Date.now();
 
 const pvIdElement = document.getElementById('pvId');
 pvIdElement.textContent = pvId;
 
 const lastVisibleTimeElement = document.getElementById('lastVisibleTime');
+lastVisibleTimeElement.textContent = lastVisibleTime;
 const sessionTimeElement = document.getElementById('sessionTime');
 sessionTimeElement.textContent = sessionTime;
 
@@ -258,10 +259,6 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     lastVisibleTime = Date.now();
     lastVisibleTimeElement.textContent = lastVisibleTime;
-      navigator.sendBeacon(
-    'https://webhook.site/e60f17c1-558d-47e3-8be3-e9cf05db3766',
-    `pv: ${pvId}, state: visible, lastVisibleTime: ${lastVisibleTime}`
-  );
   } else if (document.visibilityState === 'hidden') {
     if (lastVisibleTime !== null) {
       let now = Date.now();
